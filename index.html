@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MMU Notice Board</title>
+
+  <!-- StatCounter — paste your StatCounter snippet here -->
+  <!-- END StatCounter -->
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
+
+    #awareness {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 100vh; padding: 40px 20px;
+      background: #1a1a2e; text-align: center;
+    }
+    #awareness .badge {
+      background: #f0a500; color: #000; font-weight: 700; font-size: 13px;
+      padding: 6px 16px; border-radius: 20px; letter-spacing: 1px;
+      margin-bottom: 24px; text-transform: uppercase;
+    }
+    #awareness h1 { font-size: clamp(28px, 5vw, 48px); color: #f0a500; margin-bottom: 16px; line-height: 1.2; }
+    #awareness .subtitle { font-size: clamp(15px, 2.5vw, 20px); color: #aaa; max-width: 600px; line-height: 1.6; margin-bottom: 40px; }
+    .card {
+      background: #16213e; border: 1px solid #0f3460; border-radius: 12px;
+      padding: 28px 32px; max-width: 580px; width: 100%; text-align: left; margin-bottom: 32px;
+    }
+    .card h3 { color: #e94560; font-size: 16px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .card ul { list-style: none; }
+    .card ul li {
+      padding: 8px 0; border-bottom: 1px solid #0f3460; font-size: 15px;
+      color: #ccc; display: flex; align-items: flex-start; gap: 10px;
+    }
+    .card ul li:last-child { border-bottom: none; }
+    .card ul li span.icon { font-size: 18px; flex-shrink: 0; }
+    #awareness .study-note { font-size: 13px; color: #666; max-width: 520px; line-height: 1.6; margin-bottom: 32px; }
+    #awareness .btn {
+      background: #e94560; color: #fff; border: none; padding: 16px 40px;
+      font-size: 16px; font-weight: 700; border-radius: 8px; cursor: pointer;
+      transition: background 0.2s, transform 0.1s; letter-spacing: 0.5px;
+    }
+    #awareness .btn:hover { background: #c73652; transform: scale(1.03); }
+
+    #ransomware {
+      display: none; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 100vh; padding: 40px 20px;
+      background: #000; text-align: center; animation: flicker 0.08s 3;
+    }
+    @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
+    .skull { font-size: 80px; margin-bottom: 20px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    #ransomware h1 {
+      font-size: clamp(28px, 6vw, 56px); color: #e94560; font-weight: 900;
+      letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px;
+      text-shadow: 0 0 30px #e94560aa;
+    }
+    #ransomware .tagline { font-size: clamp(14px, 2vw, 18px); color: #888; margin-bottom: 36px; font-family: 'Courier New', monospace; }
+    .ransom-box {
+      background: #0d0d0d; border: 2px solid #e94560; border-radius: 12px;
+      padding: 32px; max-width: 620px; width: 100%; text-align: left;
+      margin-bottom: 28px; box-shadow: 0 0 40px #e9456033;
+    }
+    .ransom-box p { font-family: 'Courier New', monospace; font-size: clamp(13px, 1.8vw, 15px); color: #ccc; line-height: 1.8; margin-bottom: 12px; }
+    .ransom-box p:last-child { margin-bottom: 0; }
+    .ransom-box .highlight { color: #e94560; font-weight: 700; }
+    .ransom-box .amount { color: #f0a500; font-weight: 700; font-size: 20px; }
+    .timer-section {
+      background: #0d0d0d; border: 1px solid #333; border-radius: 8px;
+      padding: 20px 32px; max-width: 620px; width: 100%; margin-bottom: 28px; text-align: center;
+    }
+    .timer-label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; font-family: 'Courier New', monospace; }
+    #countdown {
+      font-size: clamp(36px, 7vw, 64px); font-weight: 900; color: #e94560;
+      font-family: 'Courier New', monospace; letter-spacing: 4px; text-shadow: 0 0 20px #e94560aa;
+    }
+    .encrypted-files {
+      background: #0d0d0d; border: 1px solid #222; border-radius: 8px;
+      padding: 16px 24px; max-width: 620px; width: 100%; margin-bottom: 28px;
+      font-family: 'Courier New', monospace; font-size: 12px; color: #555;
+      text-align: left; max-height: 120px; overflow: hidden;
+    }
+    .encrypted-files .file { color: #e94560; margin: 2px 0; }
+
+    #reveal {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      background: #f0a500; color: #000; text-align: center; padding: 18px 24px;
+      font-size: clamp(14px, 2vw, 17px); font-weight: 700; z-index: 999;
+      animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    #reveal button {
+      background: #000; color: #f0a500; border: none; padding: 8px 20px;
+      border-radius: 6px; font-weight: 700; cursor: pointer; margin-left: 16px; font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SCREEN 1: AWARENESS -->
+  <div id="awareness">
+    <div class="badge">⚠️ Security Awareness — MMU Notice Board</div>
+    <h1>You Just Clicked a Random Link.</h1>
+    <p class="subtitle">
+      You received this URL from someone you know — and you clicked it without thinking twice.
+      In a real attack, that's all it takes.
+    </p>
+
+    <div class="card">
+      <h3>🚨 Why This Is Dangerous</h3>
+      <ul>
+        <li><span class="icon">🎣</span> Phishing links often look exactly like links from friends or classmates</li>
+        <li><span class="icon">🔐</span> One click can silently install malware on your device</li>
+        <li><span class="icon">💳</span> Your passwords, banking details, and files can be stolen instantly</li>
+        <li><span class="icon">🔒</span> Ransomware can lock your entire device and demand payment to unlock it</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>✅ What You Should Do</h3>
+      <ul>
+        <li><span class="icon">🤔</span> Always ask yourself: am I expecting this link?</li>
+        <li><span class="icon">🔍</span> Hover over links to preview the actual URL before clicking</li>
+        <li><span class="icon">💬</span> Verify with the sender through a separate message before opening</li>
+        <li><span class="icon">🛡️</span> Keep your OS and antivirus software up to date</li>
+      </ul>
+    </div>
+
+    <p class="study-note">
+      This page is part of a CCT1114 Introduction to Computing Technology case study
+      on cybersecurity awareness among MMU students. No personal data has been collected about you.
+      Click below to see what <em>could</em> have happened if this had been a real attack.
+    </p>
+
+    <button class="btn" onclick="showRansomware()">👁️ See What Could Have Happened →</button>
+  </div>
+
+  <!-- SCREEN 2: FAKE RANSOMWARE -->
+  <div id="ransomware">
+    <div class="skull">💀</div>
+    <h1>Your Files Are Encrypted</h1>
+    <p class="tagline">// RANSOMWARE-X v4.2.1 — All your data belongs to us //</p>
+
+    <div class="ransom-box">
+      <p>All files on this device have been <span class="highlight">encrypted with AES-256</span>.</p>
+      <p>Your documents, photos, assignments, and personal data are now <span class="highlight">inaccessible</span>.</p>
+      <p>To recover your files, you must pay <span class="amount">RM 3,500</span> in Bitcoin within <span class="highlight">72 hours</span>.</p>
+      <p>After the timer expires, your decryption key will be <span class="highlight">permanently deleted</span> and your files will be lost forever.</p>
+      <p style="margin-top:16px; color:#555;">Bitcoin Wallet: <span style="color:#888;">1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R</span></p>
+    </div>
+
+    <div class="timer-section">
+      <p class="timer-label">⏳ Time remaining before key deletion</p>
+      <div id="countdown">72:00:00</div>
+    </div>
+
+    <div class="encrypted-files">
+      <div style="color:#555; margin-bottom:6px;">Encrypted files (showing 10 of 4,832):</div>
+      <div class="file">C:\Users\Student\Documents\Assignment_Final.docx.locked</div>
+      <div class="file">C:\Users\Student\Documents\FYP_Report_v3.pdf.locked</div>
+      <div class="file">C:\Users\Student\Pictures\graduation_photos.zip.locked</div>
+      <div class="file">C:\Users\Student\Desktop\passwords.txt.locked</div>
+      <div class="file">C:\Users\Student\Downloads\CCT1114_notes.pptx.locked</div>
+      <div class="file">C:\Users\Student\Documents\banking_statements.pdf.locked</div>
+      <div class="file">C:\Users\Student\Music\playlist_export.m3u.locked</div>
+      <div class="file">C:\Users\Student\Videos\lecture_recording_week5.mp4.locked</div>
+      <div class="file">C:\Users\Student\AppData\chrome_passwords.db.locked</div>
+      <div class="file">C:\Users\Student\Documents\internship_resume.docx.locked</div>
+    </div>
+  </div>
+
+  <!-- REVEAL BANNER -->
+  <div id="reveal">
+    🎓 This is a simulation — your files are safe! This is what ransomware looks like. Always think before you click.
+    <button onclick="document.getElementById('reveal').style.display='none'">Got it ✓</button>
+  </div>
+
+  <script>
+    function showRansomware() {
+      document.getElementById('awareness').style.display = 'none';
+      const r = document.getElementById('ransomware');
+      r.style.display = 'flex';
+      setTimeout(() => {
+        document.getElementById('reveal').style.display = 'block';
+      }, 2500);
+      startCountdown();
+    }
+
+    function startCountdown() {
+      let total = 72 * 3600;
+      const el = document.getElementById('countdown');
+      setInterval(() => {
+        if (total <= 0) return;
+        total--;
+        const h = String(Math.floor(total / 3600)).padStart(2, '0');
+        const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+        const s = String(total % 60).padStart(2, '0');
+        el.textContent = `${h}:${m}:${s}`;
+      }, 1000);
+    }
+  </script>
+
+</body>
+</html>
